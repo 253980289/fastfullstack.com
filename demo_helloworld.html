@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>demo_helloworld - 展示圈云开放平台</title>
+</head>
+
+<body>
+    <div>收到消息：</div>
+    <textarea id="msg_list" cols="100" rows="8"></textarea><br />
+    输入消息:<input readonly="readonly" onkeyup="(function(){return event.keyCode==13 ? publish() : 0})()" id="msg" value="helloworld" size="50">
+    <button onclick="publish();">发送</button>
+    <script src="http://cloud.292929.vip/js/zsqsdk.js"></script>
+	<script src="demo_helloworld.js"></script>
+</body>
+</html>
