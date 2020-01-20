@@ -14,3 +14,8 @@ http://cloud.292929.vip/#doc
 
 # 其它问题
 http://cloud.292929.vip/#faq
+
+# 联系
+	如果你对我们的项目感兴趣，欢迎加入我们(加入时请说明：展示圈云开放平台)。
+	<div>点击右边官方QQ群名链接加入互动：<a href = "https://jq.qq.com/?_wv=1027&k=5xrcTGg">【展示圈云开放平台】</a></div>
+	<div>客服咨询微信：liujun_is_me&nbsp;&nbsp;<img src="http://292929.vip/common/images/liujun_is_me.jpg"></div>
