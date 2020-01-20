@@ -1,0 +1,238 @@
+//客户端请求协议模块
+//by lj 2015-11
+
+syntax = "proto2";
+import "common2.proto";
+package up;
+
+
+//-------------------------通用协议---------------------------------------
+//用户信息
+message get_user_info {
+    repeated int64                  _uid_list                  = 1; //获取_uid的用户信息，获取自己的可不填
+}
+
+message send_private_msg {
+    repeated int64  _uid_list = 1;
+    optional string _sub_type = 2;
+    optional string _msg      = 3;
+    optional bool _enable_offline = 4; // 如果没有这个字段，消息只按在线处理，如果对方不在线则直接丢弃；有这个字段能离线针对发送用户当前app发送
+}
+
+message get_offline_private_msg {
+    optional int64  _service_time    = 1; // 获取这个服务器时间之后的离线消息，如果为空则获取所有服务器目前仍保存的离线消息
+}
+
+message set_ranking_score {
+    optional string _name   = 1; // 例如游戏名
+    optional string _key    = 2; // 例如uid
+    optional int64  _score  = 3; // 例如游戏分数，默认为1
+    optional bool   _add    = 4; // 非设置而是增加_score值
+}
+
+message get_ranking {
+    optional string _name     = 1;
+    optional string _key      = 2; // 除_top_num指定的排行外额外需要包含的项
+    optional int64  _top_num  = 3;
+    optional bool   _from_last  = 4; // 默认从高分到低分排序，设置此字段为true则获取从最低分开始往高分方向计数
+}
+
+// 用于表示当前用户喜欢/关注某人或某事物
+message set_like {
+    optional string _key      = 1; // 例如uid
+    optional bool   _like     = 2; // 喜欢/关注|取消关注
+    optional bool   _get_like_list     = 3; // 同时获取最新的喜欢列表
+    repeated int64  _uid_robot_list = 4; // 指定uid喜欢，用于运营中机器人机制代替当前管理帐户
+}
+
+message get_like_num {
+    repeated string _key_list      = 1; // 例如{uid}
+}
+
+message get_like_list {
+    optional string _key      = 1; // 例如uid
+}
+//-------------------------通用协议--------------------------------------
+
+//-------------------------消息管理--------------------------------------
+message create_channel {
+  optional string _channel  = 1;
+  optional channel_option_struct _channel_option = 2;
+  optional int64 _begin_service_seq = 3; // 默认为nil，表示只发送之后的消息
+  optional int64 _last_msg_len = 4; // 只查看最后消息条数
+  repeated int64 _invite_uid_list = 5;
+  optional string _group  = 6;
+  optional bool _get_all_public  = 7;
+}
+
+message destroy_channel {
+  optional string _channel = 1;
+}
+
+message publish_channel_msg {
+  optional string _channel  = 1;
+  optional string _sub_type = 2;
+  optional string _msg      = 3;
+}
+
+message subscribe_channel {
+  optional string _channel  = 1;
+  optional string _password = 2;
+  optional int64 _begin_service_seq = 3;
+  optional int64 _last_msg_len = 4; // 只查看最后消息条数
+  optional string _group  = 6;
+  optional bool _get_all_public  = 7;
+}
+
+message unsubscribe_channel {
+  optional string _channel  = 1;
+}
+
+message modify_channel {
+  optional string _channel  = 1;
+  optional string _new_name = 2;
+  optional int64 _new_master   = 3;
+  optional channel_option_struct _channel_option = 4;
+  // optional bool _public_data_changed   = 5;
+  repeated key_data_struct _public_data = 6;
+  repeated int64 _invite_uid_list = 7;
+  repeated int64 _remove_uid_list = 8;
+  repeated int64 _remove_msg_service_seq_list = 9;
+  optional bool _sadd_public_data = 96; // 添加集合值元素
+  optional bool _push_public_data = 97; // 添加数组值元素
+  optional bool _increase_public_data = 98; // 增加整数值
+  optional bool _use_update_mode = 99;
+}
+
+message get_channel_public_data {
+  optional string _channel  = 1;
+  repeated string _key_list = 2;
+}
+//-------------------------消息管理--------------------------------------
+
+
+//-------------------------文件存储--------------------------------------
+message get_file_list {
+  optional string _path  = 1;
+}
+
+message create_dir {
+  optional string _path = 1;
+  optional string _name = 2;
+}
+
+message create_file {
+  optional string _path = 1;
+  optional string _name = 2;
+  optional string _data = 3;
+  optional int64 _total_size = 4;
+  optional bool _auto_rename = 5;
+  optional bool _auto_create_path = 6;
+}
+
+message read_file {
+  optional string _path = 1;
+  optional bool _for_bin = 2;
+}
+
+message write_file {
+  optional string _path = 1;
+  optional string _data = 2;
+  optional bool _append = 3;
+  optional bool _for_bin = 4;
+  optional bool _for_base64 = 5;
+  optional bool _continued = 6; // 数据分包待续
+  optional int64 _total_size = 7;
+}
+
+message rename_file {
+  optional string _path = 1;
+  optional string _name = 2;
+  optional string _new_name = 3;
+}
+
+message rename_dir {
+  optional string _path = 1;
+  optional string _name = 2;
+  optional string _new_name = 3;
+}
+
+message move_file {
+  optional string _from_path = 1;
+  optional string _to_path = 2;
+  optional bool _auto_rename = 5;
+}
+
+message move_dir {
+  optional string _from_path = 1;
+  optional string _to_path = 2;
+  optional bool _auto_rename = 5;
+}
+
+message del_file {
+  optional string _path = 1;
+}
+
+message del_dir {
+  optional string _path = 1;
+}
+
+//分享或取消分享：可通过_forbidden字段实现取消分享
+message share_file {
+  optional share_file_struct _share_file = 1;
+}
+
+message get_self_share_file {
+}
+
+message get_share_file {
+  optional int64 _uid          = 1; // 获取指定用户给自己的分享，若为空，则表示所有用户分享给自己的或完全公开分享的文件列表
+  optional int64 _number_per_page   = 2; // 每页获取数量
+  optional int64 _page_index   = 3; // 获取的页索引
+}
+
+message search_public_share_file {
+  optional string _file_name         = 1; // 按文件名搜索
+  optional string _file_ext_name     = 2; // 按文件扩展名搜索，参数可以二选一，也可以同时存在
+}
+
+message mount_share_file {
+  optional int64 _uid          = 1; // 挂载的其他用户，服务器验证该资源是否被分享给当前用户或为公开分享资源
+  optional string _path         = 2; // 挂载的其他用户分享文件系统的路径
+  optional int64 _appid        = 3; // 挂载的其他用户开发的appid，且文件基于该app的代码区；若未设置，则认为是挂载到当前用户app(正在开发(优先)或正在使用)对应的其他用户的数据存储区，这里不存在挂载到其他用户开发的app的数据区概念或需求场景
+  optional int64 _is_dev_app   = 4; // 是否对应为代码区
+}
+
+message unmount_share_file {
+}
+//-------------------------文件存储--------------------------------------
+
+
+//-------------------------对象存储--------------------------------------
+// 注意：__shared字段作为系统保留字段名，用作配置该对象是否及具体可供其他哪些人共享读取
+// 覆盖模式
+message store_set {
+  optional string _data        = 1; // 必须为json字符串，sdk接口应直接传入js对象，sdk将会转换为json字符串；
+}
+
+// 更新模式
+message store_update {
+  optional string _data        = 1; // 必须为json字符串，sdk接口应直接传入js对象，sdk将会转换为json字符串
+}
+
+message store_remove {
+  optional string _key         = 1; // key可以包含【.】为多级结构
+}
+
+message store_get {
+  optional string _key         = 1; // key可以包含【.】为多级结构
+  optional int64  _uid_res     = 2; // 共享访问模式，需要资源拥有者设置的该对象或对象的上层祖先拥有__shared字段权限
+  optional int64  _appid_res   = 3; // 共享访问模式，需要资源拥有者设置的该对象或对象的上层祖先拥有__shared字段权限
+}
+
+message store_increase {
+  optional string _key         = 1; // key可以包含【.】为多级结构
+  optional int64 _val          = 2; // _val可为正负数，若为0则变为查询，可直接使用store_get协议；此值默认为1
+}
+// 可考虑增加删除和获取的批操作，_key设计为数组
+//-------------------------对象存储--------------------------------------
