@@ -1,0 +1,102 @@
+//协议公共结构模块
+//by lj 2015-11
+
+syntax = "proto2";
+
+//通用协议------------------------------------------
+// 错误码
+enum result_enum {
+    error_code_success                                      = 0;        //操作成功
+    error_code_fail                                         = 90001;    //失败，服务器异常
+    error_code_param_error                                  = 90002;    //参数错误，如超出有效范围
+    error_code_invalid_req                                  = 90003;    //非法操作
+    error_code_db_fail                                      = 90004;    //db操作失败
+    error_code_user_inexistent                              = 90005;    //用户不存在
+    error_code_object_inexistent                            = 90006;    //操作对象不存在
+    error_code_no_permission                                = 90007;    //无操作权限
+    error_code_need_login_first                             = 90008;    //用户没有登录
+    error_code_need_auth_app_first                          = 90009;    //用户没有认证app
+    error_code_limit                                        = 90010;    //(资源使用)满额
+    error_code_object_already_exists                        = 90011;    //操作对象已存在
+    //...增加错误码
+}
+
+message result_struct {
+    optional result_enum              _err_no               = 1;        // 错误码
+    optional string                   _err_desc             = 2;        // 失败时的错误原因描述
+}
+
+//游戏玩家显示的信息:ID,昵称，微信头像
+message user_base_info_struct {
+    optional int64                   _uid                  = 1;  // 用户唯一标识
+    optional string                  _nickname             = 2;  // 用户昵称
+    optional string                  _head_portrait        = 3;  // 用户头像
+    optional int64                   _head_portrait_version = 4;  // 用户唯一标识
+    optional int64                   _sex                  = 5;  // 性别：1，男；2，女 ；0 未知
+    optional string                  _last_position        = 6;  // 用户最后位置：上海市-浦东新区
+}
+
+message channel_option_struct {
+  optional string _password = 1; // 订阅密码
+  optional int64 _max_user = 2; // 默认100；为-1或无此字段，则不限制
+  optional int64 _max_keep_msg_list_len = 3; // 默认0，处理后立即删除；为-1或无此字段，则永远不自动删除
+  optional int64 _max_keep_msg_time = 4; // 默认0，处理后立即删除；为-1或无此字段，则永远不自动删除
+  optional bool _join_notify = 5; // 默认true，每个新加入/订阅的用户均会双向通知到所有人及将所有人通知给新人
+  optional bool _leave_notify = 6; // 默认true，每个离开/取消订阅的用户均会双向通知到所有人及将所有人通知给新人
+  optional int64 _max_offline_wait_time = 7; // 默认0，立即移除该用户；为-1或无此字段，则永远不自动删除
+  optional bool _public = 8; // 默认false，仅当前app内可见，作用域为当前app范围；否为为全系统范围
+  optional bool _auto_destroy = 9; // 默认true，当频道无人时自动销毁
+  repeated int64 _allow_publish_users = 10; // 默认nil，即允许所有频道范围(app或全局)用户；否则表示将控制允许发布消息的用户
+  repeated int64 _ban_publish_users = 11; // 默认nil，即允许所有频道范围(app或全局)用户；否则表示将控制禁止发布消息的用户
+  optional bool _allow_entry = 12; // 是否允许加入，一般在创建时及运行时根据需要修改该字段以控制加入条件
+  optional bool _enable_cluster = 13; // 启用通道集群
+  optional int64 _delay_login_millisecond_send = 14; // 默认3000，相对于登录时间延迟发送消息时间
+  optional bool _allow_modify_all_public_data = 15; // 默认nil，即不允许
+  optional int64 _allow_entry_millisecond = 16; // 从创建时间起计算，允许加入的最大时间，一般在创建时设置该字段以定时关闭加入功能
+  optional bool _allow_all_user_invite_user = 17; // 默认nil，即只允许master邀请用户加入
+  optional bool _only_robot_auto_destroy = 18; // 默认nil，即不会自动销毁
+  optional bool _client_request_msg = 19; // 默认nil，即由服务器主动推送消息
+  optional bool _only_read_self_public_data = 20; // 默认nil，即全部均可读
+  optional bool _client_request_public_data = 21; // 默认nil，即在create_channel或subscribe_channel返回消息中均自动带有_public_data数据，否则需要额外请求get_channel_public_data消息返回；此设置至少适合两种应用场景：1、由master发布内容而其他用户仅能读写自己提交的内容；2、public_data数据很多，采用按需读取模式以优化网络性能；
+}
+
+message key_data_struct {
+  optional string _key      = 1;
+  optional string _data     = 2;
+  optional int64 _service_time = 3; // 服务器收到消息时的服务器时间
+}
+
+message channel_struct {
+  optional string _channel = 1;
+  optional int64 _creator = 2;
+  optional int64 _create_time = 3;
+  optional int64 _appid = 4;
+  optional int64 _master = 5;
+  optional channel_option_struct _option = 6;
+  repeated int64 _uid_list = 7;
+  optional int64 _service_seq = 8;
+  repeated key_data_struct _public_data = 9;
+  optional string _group  = 10;
+  repeated int64 _uid_offline_list = 11; // 对应_uid_list列表的离线时间，如果在线，对应值为0
+}
+
+message file_meta_info_struct {
+  optional string _name      = 1;
+  optional string _tag       = 2; // enum: file, directory, link, socket, named pipe, char device, block device or other
+  optional int64 _size      = 3; // file size, in bytes
+}
+
+message share_file_struct {
+  repeated int64 _share_uid_list  = 1; // 被分享者列表，拥有操作权限的人，若为空，表示为对所有人公开分享
+  optional string _path       = 2; // 分享文件系统的路径，可以是单个文件，也可以是一个目录树的根路径
+  optional int64 _permission = 3; // 分享权限，采用linux文件权限策略，1表示可执行权限(此处无效)，2表示可写权限，4表示可读权限；同样可异或计算，如6表示可读可写
+  optional bool   _forbidden = 4; // true表示反向操作，即取消对之前已分享资源的全部或分支的分享
+  optional int64 _uid       = 5; // 文件所有者，分享者；自己执行分享操作时，此字段被忽略
+  optional int64 _appid     = 6; // 要分享的存储区对应的app，可能为代码区也可能为数据区
+  optional int64 _is_dev_app     = 7; // 是否对应为代码区
+}
+
+message ranking_data_struct {
+  optional string _key      = 1;
+  optional int64  _score    = 2;
+}
