@@ -6,3 +6,11 @@ http://cloud.292929.vip/
 
 # 平台案例展示
 http://cloud.292929.vip/#case
+
+
+# 平台开发文档
+http://cloud.292929.vip/#doc
+
+
+# 其它问题
+http://cloud.292929.vip/#faq
