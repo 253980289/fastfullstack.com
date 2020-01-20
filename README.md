@@ -16,7 +16,7 @@ http://cloud.292929.vip/#doc
 http://cloud.292929.vip/#faq
 
 # 联系
-点击下方链接加入官方QQ群交流：
+点击下方链接加入官方QQ群(251860015)交流：
 
 https://jq.qq.com/?_wv=1027&k=5xrcTGg
 
