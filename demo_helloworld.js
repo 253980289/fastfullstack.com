@@ -1,11 +1,11 @@
-/// <reference path = "zsqsdk.d.ts" /> 
+/// <reference path = "kfssdk.d.ts" /> 
 function $(key) {
     return document.querySelector(key);
 }
 var CHANNEL_NAME = "demo_helloworld";
 function publish() {
     var msg = $('#msg');
-    zsqsdk.publish_channel_msg({
+    kfssdk.publish_channel_msg({
         _channel: CHANNEL_NAME,
         _sub_type: "say",
         _msg: { data: msg.value }
@@ -13,11 +13,11 @@ function publish() {
     msg.value = "";
     msg.focus();
 }
-zsqsdk.init({
+kfssdk.init({
     appid: 100001,
     appkey: "gjseabmtoljxeknc",
     onready: function () {
-        zsqsdk.create_channel({
+        kfssdk.create_channel({
             _channel: CHANNEL_NAME,
             _channel_option: {
                 _max_keep_msg_list_len: 20

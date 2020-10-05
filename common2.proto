@@ -38,26 +38,30 @@ message user_base_info_struct {
 
 message channel_option_struct {
   optional string _password = 1; // 订阅密码
-  optional int64 _max_user = 2; // 默认100；为-1或无此字段，则不限制
-  optional int64 _max_keep_msg_list_len = 3; // 默认0，处理后立即删除；为-1或无此字段，则永远不自动删除
-  optional int64 _max_keep_msg_time = 4; // 默认0，处理后立即删除；为-1或无此字段，则永远不自动删除
+  optional int64 _max_user = 2; // 默认100；为-1，则不限制
+  optional int64 _max_keep_msg_list_len = 3; // 默认0，处理后立即删除；为-1，则永远不自动删除
+  optional int64 _max_keep_msg_time = 4; // 默认为系统配置的非永久存储时间，若为0，则处理后立即删除；为-1，则永远不自动删除
   optional bool _join_notify = 5; // 默认true，每个新加入/订阅的用户均会双向通知到所有人及将所有人通知给新人
   optional bool _leave_notify = 6; // 默认true，每个离开/取消订阅的用户均会双向通知到所有人及将所有人通知给新人
-  optional int64 _max_offline_wait_time = 7; // 默认0，立即移除该用户；为-1或无此字段，则永远不自动删除
-  optional bool _public = 8; // 默认false，仅当前app内可见，作用域为当前app范围；否为为全系统范围
-  optional bool _auto_destroy = 9; // 默认true，当频道无人时自动销毁
-  repeated int64 _allow_publish_users = 10; // 默认nil，即允许所有频道范围(app或全局)用户；否则表示将控制允许发布消息的用户
-  repeated int64 _ban_publish_users = 11; // 默认nil，即允许所有频道范围(app或全局)用户；否则表示将控制禁止发布消息的用户
-  optional bool _allow_entry = 12; // 是否允许加入，一般在创建时及运行时根据需要修改该字段以控制加入条件
-  optional bool _enable_cluster = 13; // 启用通道集群
-  optional int64 _delay_login_millisecond_send = 14; // 默认3000，相对于登录时间延迟发送消息时间
-  optional bool _allow_modify_all_public_data = 15; // 默认nil，即不允许
-  optional int64 _allow_entry_millisecond = 16; // 从创建时间起计算，允许加入的最大时间，一般在创建时设置该字段以定时关闭加入功能
-  optional bool _allow_all_user_invite_user = 17; // 默认nil，即只允许master邀请用户加入
-  optional bool _only_robot_auto_destroy = 18; // 默认nil，即不会自动销毁
-  optional bool _client_request_msg = 19; // 默认nil，即由服务器主动推送消息
-  optional bool _only_read_self_public_data = 20; // 默认nil，即全部均可读
-  optional bool _client_request_public_data = 21; // 默认nil，即在create_channel或subscribe_channel返回消息中均自动带有_public_data数据，否则需要额外请求get_channel_public_data消息返回；此设置至少适合两种应用场景：1、由master发布内容而其他用户仅能读写自己提交的内容；2、public_data数据很多，采用按需读取模式以优化网络性能；
+  optional bool _online_notify = 7; // 默认true，每个通道内用户上线均会双向通知到所有人及将所有人通知给新人
+  optional bool _offline_notify = 8; // 默认true，每个通道内用户下线均会双向通知到所有人及将所有人通知给新人
+  optional int64 _max_offline_wait_time = 9; // 默认0，立即移除该用户；为-1，则永远不自动删除
+  optional bool _public = 10; // 默认false，仅当前app内可见，作用域为当前app范围；否为为全系统范围
+  optional bool _auto_destroy = 11; // 默认true，当频道无人时自动销毁
+  repeated int64 _allow_publish_users = 12; // 默认nil，即允许所有频道范围(app或全局)用户；否则表示将控制允许发布消息的用户
+  repeated int64 _ban_publish_users = 13; // 默认nil，即允许所有频道范围(app或全局)用户；否则表示将控制禁止发布消息的用户
+  optional bool _allow_entry = 14; // 是否允许加入，一般在创建时及运行时根据需要修改该字段以控制加入条件
+  optional bool _enable_cluster = 15; // 启用通道集群
+  optional int64 _delay_login_millisecond_send = 16; // 默认3000，相对于登录时间延迟发送消息时间
+  optional bool _allow_modify_all_public_data = 17; // 默认nil，即不允许
+  optional int64 _allow_entry_millisecond = 18; // 从创建时间起计算，允许加入的最大时间，一般在创建时设置该字段以定时关闭加入功能
+  optional bool _allow_all_user_invite_user = 19; // 默认nil，即只允许master邀请用户加入
+  optional bool _only_robot_auto_destroy = 20; // 默认nil，即不会自动销毁
+  optional bool _client_request_msg = 21; // 默认nil，即由服务器主动推送消息
+  optional bool _only_read_self_public_data = 22; // 默认nil，即全部均可读
+  optional bool _client_request_public_data = 23; // 默认nil，即在create_channel或subscribe_channel返回消息中均自动带有_public_data数据，否则需要额外请求get_channel_public_data消息返回；此设置至少适合两种应用场景：1、由master发布内容而其他用户仅能读写自己提交的内容；2、public_data数据很多，采用按需读取模式以优化网络性能；
+  optional bool _user_all_offline_auto_destroy = 25; // 默认nil，即不会自动销毁
+  optional bool _send_self = 26; // 默认true，即自身发的公有数据会反向发送回自身
 }
 
 message key_data_struct {
