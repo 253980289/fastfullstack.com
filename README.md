@@ -1,4 +1,7 @@
-# zsq 快全栈云开放平台
+# fastfullstack.com
+快全栈云开放平台，sdk，通用服务器，无服务器，severless架构，baas
+
+# 快全栈云开放平台
 平台官网：
 https://fastfullstack.com/
 快全栈云开放平台本质上属于云计算领域的paas平台，为saas软件提供服务。不同于同类云服务平台的主要点是本平台更偏业务层，通俗的讲即更接地气，更好用、实用。
